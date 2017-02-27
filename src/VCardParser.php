@@ -161,6 +161,7 @@ class VCardParser implements Iterator
 
             if (strtoupper($line) == "BEGIN:VCARD") {
                 $cardData = new \stdClass();
+                $cardData->x = array();
             } elseif (strtoupper($line) == "END:VCARD") {
                 $this->vcardObjects[] = $cardData;
             } elseif (!empty($line)) {
@@ -284,6 +285,15 @@ class VCardParser implements Iterator
                         break;
                     case 'CATEGORIES':
                         $cardData->categories = array_map('trim', explode(',', $value));
+                        break;
+                    case 'X-MS-ASSISTANT':
+                        $cardData->x["msassistant"] = $value;
+                        break;
+                    case 'X-MS-MANAGER':
+                        $cardData->x["msmanager"] = $value;
+                        break;
+                    case 'X-MS-SPOUSE':
+                        $cardData->x["msspouse"] = $value;
                         break;
                 }
             }
