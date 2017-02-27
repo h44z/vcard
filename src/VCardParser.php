@@ -254,7 +254,17 @@ class VCardParser implements Iterator
                         $cardData->version = $value;
                         break;
                     case 'ORG':
-                        $cardData->organization = $value;
+                        $splitValue = $this->splitValue($value);
+                        if(count($splitValue) > 1) {
+                            // first value is organization, second value is department
+                            $cardData->organization = $this->unescape($splitValue[0]);
+                            $cardData->department = $this->unescape($splitValue[1]);
+                        } else {
+                            $cardData->organization = $this->unescape($value);
+                        }
+                        break;
+                    case 'OFFICE':
+                        $cardData->officelocation = $this->unescape($value);
                         break;
                     case 'URL':
                         if (!isset($cardData->url)) {
@@ -264,7 +274,7 @@ class VCardParser implements Iterator
                         $cardData->url[$key][] = $value;
                         break;
                     case 'TITLE':
-                        $cardData->title = $value;
+                        $cardData->title = $this->unescape($value);
                         break;
                     case 'PHOTO':
                         if ($rawValue) {
@@ -346,15 +356,26 @@ class VCardParser implements Iterator
     }
 
     /**
-     * Unescape newline characters according to RFC2425 section 5.8.4.
-     * This function will replace escaped line breaks with PHP_EOL.
+     * Unescape newline characters according to rfc6350 section 3.4.
+     * This function will replace:
+     *  - escaped line breaks with PHP_EOL
+     *  - escaped commas by ascii comma
+     *  - escaped semicolon by ascii semicolon
      *
-     * @link http://tools.ietf.org/html/rfc2425#section-5.8.4
+     * @link https://tools.ietf.org/html/rfc6350#section-3.4
      * @param  string $text
      * @return string
      */
     protected function unescape($text)
     {
-        return str_replace("\\n", PHP_EOL, $text);
+        $unescaped = str_replace("\\n", PHP_EOL, $text);
+        $unescaped = str_replace("\\;", ";", $unescaped);
+        $unescaped = str_replace("\\,", ",", $unescaped);
+        return $unescaped;
+    }
+
+    protected function splitValue($value)
+    {
+        return preg_split('/(?<!\\\\)(\;)/i', $value, -1, PREG_SPLIT_NO_EMPTY);
     }
 }
