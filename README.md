@@ -10,15 +10,10 @@ This VCard PHP class can generate a vCard with some data. When using an iOS devi
 
 ### Installation
 
-``` json
-{
-    "require": {
-        "jeroendesloovere/vcard": "1.2.*"
-    }
-}
+```bash
+composer require jeroendesloovere/vcard
 ```
-
-> Add the above in your `composer.json` file when using [Composer](https://getcomposer.org).
+> This will install the latest version of vcard with [Composer](https://getcomposer.org)
 
 ### Example
 
@@ -55,6 +50,11 @@ $vcard->addPhoto(__DIR__ . '/landscape.jpeg');
 
 // return vcard as a download
 return $vcard->download();
+
+// save vcard on disk
+//$vcard->setSavePath('/path/to/directory');
+//$vcard->save();
+
 ```
 
 > [View all examples](/examples/example.php) or check [the VCard class](/src/VCard.php).
@@ -64,6 +64,9 @@ return $vcard->download();
 The parser can either get passed a VCard string, like so:
 
 ```php
+// load VCardParser classes
+use JeroenDesloovere\VCard\VCardParser;
+
 $parser = new VCardParser($vcardString);
 echo $parser->getCardAtIndex(0)->fullname; // Prints the full name.
 ```
@@ -74,6 +77,7 @@ Or by using a factory method with a file name:
 $parser = VCardParser::parseFromFile('path/to/file.vcf');
 echo $parser->getCardAtIndex(0)->fullname; // Prints the full name.
 ```
+> [View the parsing example](/examples/example_parsing.php) or check the [the VCardParser class](/src/VCardParser.php) class.
 
 **Support for frameworks**
 

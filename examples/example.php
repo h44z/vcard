@@ -2,8 +2,6 @@
 
 /**
  * VCard generator test - can save to file or output as a download
- *
- * @author Jeroen Desloovere <info@jeroendesloovere.be>
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';

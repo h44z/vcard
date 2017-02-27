@@ -153,19 +153,34 @@ class VCardParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($parser->getCardAtIndex(0)->url['PREF;WORK'][0], 'http://work1.example.com');
         $this->assertEquals($parser->getCardAtIndex(0)->url['PREF;WORK'][1], 'http://work2.example.com');
     }
-    
+
     public function testNote()
     {
         $vcard = new VCard();
         $vcard->addNote('This is a testnote');
         $parser = new VCardParser($vcard->buildVCard());
-        
+
         $vcardMultiline = new VCard();
         $vcardMultiline->addNote("This is a multiline note\nNew line content!\r\nLine 2");
         $parserMultiline = new VCardParser($vcardMultiline->buildVCard());
-        
+
         $this->assertEquals($parser->getCardAtIndex(0)->note, 'This is a testnote');
         $this->assertEquals(nl2br($parserMultiline->getCardAtIndex(0)->note), nl2br("This is a multiline note" . PHP_EOL . "New line content!" . PHP_EOL . "Line 2"));
+    }
+
+    public function testCategories()
+    {
+        $vcard = new VCard();
+        $vcard->addCategories([
+            'Category 1',
+            'cat-2',
+            'another long category!'
+        ]);
+        $parser = new VCardParser($vcard->buildVCard());
+
+        $this->assertEquals($parser->getCardAtIndex(0)->categories[0], 'Category 1');
+        $this->assertEquals($parser->getCardAtIndex(0)->categories[1], 'cat-2');
+        $this->assertEquals($parser->getCardAtIndex(0)->categories[2], 'another long category!');
     }
 
     public function testTitle()
@@ -260,6 +275,10 @@ class VCardParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($cards[0]->firstname, "Wouter");
         $this->assertEquals($cards[0]->lastname, "Admiraal");
         $this->assertEquals($cards[0]->fullname, "Wouter Admiraal");
+        // Check the parsing of grouped items as well, which are present in the
+        // example file.
+        $this->assertEquals($cards[0]->url['default'][0], 'http://example.com');
+        $this->assertEquals($cards[0]->email['INTERNET'][0], 'site@example.com');
     }
 
     /**
