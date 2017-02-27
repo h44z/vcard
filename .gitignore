@@ -1,5 +1,4 @@
-.idea/
-phpunit.phar
 composer.lock
 vendor
 .idea/
+phpunit.phar
